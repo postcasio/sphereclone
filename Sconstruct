@@ -11,7 +11,6 @@ engine_sources = in_dir('sphere/engine/src/',
 					 [
 					  'main.cpp',
 					  'files.cpp',
-					  'sdl.cpp',
 					  'api/fs.cpp',
 					  'api/engine.cpp',
 					  'api/graphics.cpp'
