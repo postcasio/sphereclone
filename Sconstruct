@@ -1,0 +1,20 @@
+env = Environment()
+
+env.Replace(CXX = 'clang++')
+env.Append(CCFLAGS = '-fcolor-diagnostics -Isphere/engine/includes -I/usr/local/Cellar/v8/3.18.2/include -I/usr/local/Cellar/sdl/1.2.15/include -DDEBUG')
+env.Append(LINKFLAGS = '-L/usr/local/Cellar/v8/3.18.2/lib -L/usr/local/Cellar/sdl/1.2.15/lib -lv8 -lSDL -lSDLmain -framework Cocoa')
+
+def in_dir(dir, sources):
+	return map(lambda s: dir + s, sources)
+
+engine_sources = in_dir('sphere/engine/src/',
+					 [
+					  'main.cpp',
+					  'files.cpp',
+					  'sdl.cpp',
+					  'api/fs.cpp',
+					  'api/engine.cpp',
+					  'api/graphics.cpp'
+					  ])
+
+env.Program(target = 'engine', source = engine_sources)
