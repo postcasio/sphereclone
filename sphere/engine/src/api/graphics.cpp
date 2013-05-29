@@ -80,10 +80,10 @@ namespace API {
 		Handle<Value> Surface_rectangle(const Arguments& args) {
 			SDL_Surface* surface = static_cast<SDL_Surface*>(args.Holder()->GetAlignedPointerFromInternalField(0));
 			
-			int x = args[0]->ToInt32()->Int32Value();
-			int y = args[1]->ToInt32()->Int32Value();
-			int w = args[2]->ToInt32()->Int32Value();
-			int h = args[3]->ToInt32()->Int32Value();
+			int x = args[0]->Int32Value();
+			int y = args[1]->Int32Value();
+			int w = args[2]->Int32Value();
+			int h = args[3]->Int32Value();
 			
 			SDL_Rect rect = { x, y, w, h };
 			SphereColor* color = static_cast<SphereColor*>(args[4]->ToObject()->GetAlignedPointerFromInternalField(0));
