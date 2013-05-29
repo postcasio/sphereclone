@@ -38,13 +38,15 @@ namespace API {
 			Color = FunctionTemplate::New();
 			ColorInstanceTemplate = Color->InstanceTemplate();
 			ColorProto = Color->PrototypeTemplate();
+			
 			ColorInstanceTemplate->SetAccessor(String::New("red"), Color_getRed, Color_setRed);
+			ColorInstanceTemplate->SetAccessor(String::New("green"), Color_getGreen, Color_setGreen);
+			ColorInstanceTemplate->SetAccessor(String::New("blue"), Color_getBlue, Color_setBlue);
+			
 			ColorInstanceTemplate->SetInternalFieldCount(1);
 			
 			ColorConstructor = FunctionTemplate::New(Color_constructor);
 			graphics->Set(String::New("Color"), ColorConstructor->GetFunction());
-			
-			
 		}
 		
 		Handle<Value> setVideoMode(const Arguments& args) {
@@ -88,7 +90,7 @@ namespace API {
 			SDL_Rect rect = { x, y, w, h };
 			SphereColor* color = static_cast<SphereColor*>(args[4]->ToObject()->GetAlignedPointerFromInternalField(0));
 			
-			SDL_FillRect(surface, &rect, color->ToUint32());
+			SDL_FillRect(surface, &rect, color->ToUint32(surface->format));
 			
 			return True();
 		}
@@ -104,8 +106,8 @@ namespace API {
 		
 		}
 		
-		uint32_t SphereColor::ToUint32() {
-			return (this->red << 24 | this->green << 16 | this->blue << 8 | this->alpha);
+		uint32_t SphereColor::ToUint32(SDL_PixelFormat* pixel) {
+			return SDL_MapRGBA(pixel, this->red, this->green, this->blue, this->alpha);
 		}
 		
 		Handle<Value> Color_constructor(const Arguments &args) {
@@ -114,7 +116,6 @@ namespace API {
 			}
 		 
 			HandleScope scope;
-
 			
 			uint8_t r = args[0]->Int32Value();
 			uint8_t g = args[1]->Int32Value();
@@ -136,9 +137,29 @@ namespace API {
 			return Integer::New(color->red);
 		}
 		
-		void Color_setRed(Local<String> property, Local<Value> value, const v8::AccessorInfo& info) {
+		void Color_setRed(Local<String> property, Local<Value> value, const AccessorInfo& info) {
 			SphereColor* color = static_cast<SphereColor*>(info.Holder()->GetAlignedPointerFromInternalField(0));
 			color->red = value->Int32Value();
+		}
+		
+		Handle<Value> Color_getGreen(Local<String> property, const AccessorInfo &info) {
+			SphereColor* color = static_cast<SphereColor*>(info.Holder()->GetAlignedPointerFromInternalField(0));
+			return Integer::New(color->green);
+		}
+		
+		void Color_setGreen(Local<String> property, Local<Value> value, const AccessorInfo& info) {
+			SphereColor* color = static_cast<SphereColor*>(info.Holder()->GetAlignedPointerFromInternalField(0));
+			color->green = value->Int32Value();
+		}
+		
+		Handle<Value> Color_getBlue(Local<String> property, const AccessorInfo &info) {
+			SphereColor* color = static_cast<SphereColor*>(info.Holder()->GetAlignedPointerFromInternalField(0));
+			return Integer::New(color->blue);
+		}
+		
+		void Color_setBlue(Local<String> property, Local<Value> value, const AccessorInfo& info) {
+			SphereColor* color = static_cast<SphereColor*>(info.Holder()->GetAlignedPointerFromInternalField(0));
+			color->blue = value->Int32Value();
 		}
 	}
 }

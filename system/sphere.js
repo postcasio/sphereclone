@@ -14,8 +14,11 @@
 	
 	var required_scripts = {};
 	var screen = null;
+	var screen_width = 320;
+	var screen_height = 240;
+	var black = new sphere.graphics.Color(0, 0, 0, 0);
 	
-	screen = sphere.graphics.setVideoMode(320, 240);
+	screen = sphere.graphics.setVideoMode(screen_width, screen_height);
 	
 	_extend(global, {
 		RequireScript: function(path) {
@@ -33,7 +36,10 @@
 		Abort: sphere.engine.abort,
 		RestartGame: sphere.engine.restartGame,
 		Exit: sphere.engine.exit,
-		FlipScreen: sphere.graphics.flipScreen,
+		FlipScreen: function() {
+			sphere.graphics.flipScreen();
+			screen.rectangle(0, 0, screen_width, screen_height, black);
+		},
 		Rectangle: function(x, y, w, h, c) {
 			return screen.rectangle(x, y, w, h, c);
 		},
@@ -46,11 +52,24 @@
 	});
 	
 	var color = CreateColor(255, 255, 255, 255);
-	var color2 = CreateColor(255, 0, 0, 128);
+	var x = 0;
+	var y = 0;
+	var dx = 1;
+	var dy = 1;
+	
 	while (true) {
-		Rectangle(10, 10, 300, 220, color);
-		screen.rectangle(20, 20, 280, 200, color2);
-		FlipScreen();
+		Rectangle(x, y, 10, 10, black);
+		x += dx
+		y += dy
+		Rectangle(x, y, 10, 10, color);
+		sphere.graphics.flipScreen();	// internal flipscreen does not automatically blank screen!
+		sphere.events.poll();
+		if (x == 311 || x == -1) {
+			dx *= -1;
+		}
+		if (y == 231 || y == -1) {
+			dy *= -1;
+		}
 	}
 	
 })(this);

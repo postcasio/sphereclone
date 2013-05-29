@@ -31,6 +31,7 @@ int main(int argc, char* argv[]) {
 	API::fs::Init(sphere);
 	API::engine::Init(sphere);
 	API::graphics::Init(sphere);
+	API::events::Init(sphere);
 	
 	//sphere->Get(String::New("engine"))->ToObject()->Set(String::New("activeGame"), String::New(argv[1]));
 	

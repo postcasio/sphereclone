@@ -13,7 +13,8 @@ engine_sources = in_dir('sphere/engine/src/',
 					  'files.cpp',
 					  'api/fs.cpp',
 					  'api/engine.cpp',
-					  'api/graphics.cpp'
+					  'api/graphics.cpp',
+					  'api/events.cpp'
 					  ])
 
 env.Program(target = 'engine', source = engine_sources)

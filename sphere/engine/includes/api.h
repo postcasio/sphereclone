@@ -2,6 +2,8 @@
 #define API_H_
 
 #include <v8.h>
+#include "helpers.h"
+
 namespace API {
 	namespace fs {
 		void Init(v8::Local<v8::Object> global);
@@ -21,12 +23,12 @@ namespace API {
 	namespace graphics {
 		void Init(v8::Local<v8::Object> global);
 		
-		class SphereColor {
+		class ALIGNED SphereColor {
 			public:
 				SphereColor(uint8_t, uint8_t, uint8_t, uint8_t);
 				~SphereColor();
 				
-				uint32_t ToUint32();
+				uint32_t ToUint32(SDL_PixelFormat* surface);
 				
 				uint8_t red;
 				uint8_t green;
@@ -40,6 +42,15 @@ namespace API {
 		v8::Handle<v8::Value> Color_constructor(const v8::Arguments& args);
 		v8::Handle<v8::Value> Color_getRed(v8::Local<v8::String> property, const v8::AccessorInfo &info);
 		void Color_setRed(v8::Local<v8::String> property, v8::Local<v8::Value> value, const v8::AccessorInfo& info);
-	}	
+		v8::Handle<v8::Value> Color_getGreen(v8::Local<v8::String> property, const v8::AccessorInfo &info);
+		void Color_setGreen(v8::Local<v8::String> property, v8::Local<v8::Value> value, const v8::AccessorInfo& info);
+		v8::Handle<v8::Value> Color_getBlue(v8::Local<v8::String> property, const v8::AccessorInfo &info);
+		void Color_setBlue(v8::Local<v8::String> property, v8::Local<v8::Value> value, const v8::AccessorInfo& info);
+	}
+	namespace events {
+		void Init(v8::Local<v8::Object> global);
+		
+		v8::Handle<v8::Value> poll(const v8::Arguments& args);
+	}
 }
 #endif
