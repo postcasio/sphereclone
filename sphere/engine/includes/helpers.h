@@ -13,7 +13,7 @@
 
 #define debug(str) if (DEBUG) { printf(str); }
 
-#ifdef WIN32
+#ifdef _WIN32
 
 #define ALIGNED _declspec(align(2))
 
