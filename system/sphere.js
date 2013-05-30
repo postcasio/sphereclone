@@ -1,3 +1,5 @@
+/*global sphere*/
+
 (function(global) {
 	var activeGame,
 		required_scripts = {},
@@ -5,9 +7,10 @@
 		screen_width,
 		screen_height,
 		black = new sphere.graphics.Color(0, 0, 0, 255);
-	
-	function _extend(target) {
+
+	function extend(target) {
 		var sources = Array.prototype.slice.call(arguments, 1);
+	
 		for (var i = 0; i < sources.length; i++) {
 			for (var p in sources[i]) {
 				if (sources[i].hasOwnProperty(p)) {
@@ -79,7 +82,7 @@
 			return this.values[key];
 		}
 		return def;
-	}
+	};
 	
 	function Game(path) {
 		this.path = path;
