@@ -8,20 +8,6 @@
 		screen_height,
 		black = new sphere.graphics.Color(0, 0, 0, 255);
 
-	function extend(target) {
-		var sources = Array.prototype.slice.call(arguments, 1);
-	
-		for (var i = 0; i < sources.length; i++) {
-			for (var p in sources[i]) {
-				if (sources[i].hasOwnProperty(p)) {
-					target[p] = sources[i][p];
-				}
-			}
-		}
-	
-		return target;
-	}
-	
 	function pathjoin() {
 		var args = Array.prototype.slice.call(arguments, 0);
 		return args.join(sphere.fs.path_separator);
