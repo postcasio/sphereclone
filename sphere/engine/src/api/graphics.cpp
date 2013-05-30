@@ -71,7 +71,7 @@ namespace API {
 		
 		Handle<Value> flipScreen(const Arguments& args) {
 			if (screen == NULL) {
-				return ThrowException(String::New("Screen has not been initialized!"));
+				return ThrowException(String::New("Screen has not been initialized."));
 			}
 			
 			SDL_Flip(screen);

@@ -33,7 +33,16 @@ int main(int argc, char* argv[]) {
 	API::graphics::Init(sphere);
 	API::events::Init(sphere);
 	
-	//sphere->Get(String::New("engine"))->ToObject()->Set(String::New("activeGame"), String::New(argv[1]));
+	Local<Object> engine = sphere->Get(String::New("engine"))->ToObject();
+	
+	engine->Set(String::New("argc"), Integer::New(argc));
+	Local<Array> js_argv = Array::New(argc);
+	
+	for (int i = 0; i < argc; i++) {
+		js_argv->Set(Number::New(i), String::New(argv[i]));
+	}
+
+	engine->Set(String::New("argv"), js_argv);
 	
 	const char* gameScript = Files::readTextFile("system/sphere.js");
 	

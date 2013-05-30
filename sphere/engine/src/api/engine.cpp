@@ -1,4 +1,5 @@
 #include <v8.h>
+#include <SDL/sdl.h>
 #include "engine.h"
 #include "helpers.h"
 #include "api.h"
@@ -13,19 +14,14 @@ namespace API {
 			Handle<Object> engine = Object::New();
 			global->Set(String::New("engine"), engine);
 			
-			engine->Set(String::New("abort"), V8_FUNC(API::engine::abort
-														 ));
-			engine->Set(String::New("exit"), V8_FUNC(API::engine::exit
-													  ));
-			engine->Set(String::New("restart"), V8_FUNC(API::engine::restart
-													  ));
-			engine->Set(String::New("restartGame"), V8_FUNC(API::engine::restartGame
-													  ));
-			engine->Set(String::New("evalInContext"), V8_FUNC(API::engine::evalInContext
-																 ));
-			engine->Set(String::New("evalScript"), V8_FUNC(API::engine::evalScript
-															  ));
+			engine->Set(String::New("abort"), V8_FUNC(API::engine::abort));
+			engine->Set(String::New("exit"), V8_FUNC(API::engine::exit));
+			engine->Set(String::New("restart"), V8_FUNC(API::engine::restart));
+			engine->Set(String::New("restartGame"), V8_FUNC(API::engine::restartGame));
+			engine->Set(String::New("evalInContext"), V8_FUNC(API::engine::evalInContext));
+			engine->Set(String::New("evalScript"), V8_FUNC(API::engine::evalScript));
 			engine->Set(String::New("version"), String::New(ENGINE_VERSION));
+			engine->Set(String::New("setWindowTitle"), V8_FUNC(API::engine::setWindowTitle));
 		}
 		
 		Handle<Value> abort(const Arguments& args) {
@@ -104,6 +100,13 @@ namespace API {
 
 			
 			return scope.Close(value);
+		}
+		
+		Handle<Value> setWindowTitle(const Arguments& args) {
+			String::Utf8Value utf8_value(args[0]);
+			SDL_WM_SetCaption(*utf8_value, NULL);
+			
+			return Undefined();
 		}
 	}
 }

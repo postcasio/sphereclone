@@ -1,5 +1,12 @@
 (function(global) {
-	var _extend = function(target) {
+	var activeGame,
+		required_scripts = {},
+		screen,
+		screen_width,
+		screen_height,
+		black = new sphere.graphics.Color(0, 0, 0, 255);
+	
+	function _extend(target) {
 		var sources = Array.prototype.slice.call(arguments, 1);
 		for (var i = 0; i < sources.length; i++) {
 			for (var p in sources[i]) {
@@ -10,17 +17,14 @@
 		}
 	
 		return target;
-	};
+	}
 	
-	var required_scripts = {};
-	var screen = null;
-	var screen_width = 320;
-	var screen_height = 240;
-	var black = new sphere.graphics.Color(0, 0, 0, 0);
+	function pathjoin() {
+		var args = Array.prototype.slice.call(arguments, 0);
+		return args.join(sphere.fs.path_separator);
+	}
 	
-	screen = sphere.graphics.setVideoMode(screen_width, screen_height);
-	
-	_extend(global, {
+	var SphereAPI = {
 		RequireScript: function(path) {
 			if (path in required_scripts) {
 				return;
@@ -39,6 +43,7 @@
 		FlipScreen: function() {
 			sphere.graphics.flipScreen();
 			screen.rectangle(0, 0, screen_width, screen_height, black);
+			sphere.events.poll();
 		},
 		Rectangle: function(x, y, w, h, c) {
 			return screen.rectangle(x, y, w, h, c);
@@ -48,28 +53,60 @@
 				a = 255;
 			}
 			return new sphere.graphics.Color(r, g, b, a);
+		},
+		GetScreenWidth: function() {
+			return screen_width;
+		},
+		GetScreenHeight: function() {
+			return screen_height;
 		}
-	});
+	};
 	
-	var color = CreateColor(255, 255, 255, 255);
-	var x = 0;
-	var y = 0;
-	var dx = 1;
-	var dy = 1;
+	function ConfigFile(path) {
+		var text = sphere.fs.readTextFile(path);
+		var lines = text.split('\n');
 	
-	while (true) {
-		Rectangle(x, y, 10, 10, black);
-		x += dx
-		y += dy
-		Rectangle(x, y, 10, 10, color);
-		sphere.graphics.flipScreen();	// internal flipscreen does not automatically blank screen!
-		sphere.events.poll();
-		if (x == 311 || x == -1) {
-			dx *= -1;
-		}
-		if (y == 231 || y == -1) {
-			dy *= -1;
+		this.values = {};
+	
+		for (var i = 0; i < lines.length; i++) {
+			var kvp = lines[i].split('=');
+			this.values[kvp[0].trim()] = kvp[1].trim();
 		}
 	}
 	
+	ConfigFile.prototype.read = function(key, def) {
+		if (key in this.values) {
+			return this.values[key];
+		}
+		return def;
+	}
+	
+	function Game(path) {
+		this.path = path;
+	
+		this.configuration = new ConfigFile(pathjoin(path, 'game.sgm'));
+	}
+
+	if (sphere.engine.argv.length > 1) {
+		activeGame = new Game(sphere.engine.argv[1]);
+	}
+	else {
+		activeGame = new Game('startup');
+	}
+
+	screen = sphere.graphics.setVideoMode(
+		screen_width = activeGame.configuration.read('screen_width'),
+		screen_height = activeGame.configuration.read('screen_height')
+	);
+	
+	sphere.engine.setWindowTitle(activeGame.configuration.read('name'));
+	
+	var script_path = activeGame.configuration.read('script');
+	var script = sphere.fs.readTextFile(pathjoin(activeGame.path, 'scripts', script_path));
+	
+	// evalInContext doesn't expose this to us to call from here,
+	// so append it to the script.
+	script += "\ngame();";
+	
+	sphere.engine.evalInContext(script, SphereAPI, script_path);
 })(this);

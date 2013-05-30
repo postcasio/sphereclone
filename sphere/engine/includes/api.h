@@ -2,7 +2,10 @@
 #define API_H_
 
 #include <v8.h>
+#include <SDL/sdl.h>
 #include "helpers.h"
+
+#define PATH_SEPARATOR "/"
 
 namespace API {
 	namespace fs {
@@ -19,6 +22,7 @@ namespace API {
 		v8::Handle<v8::Value> restartGame(const v8::Arguments& args);
 		v8::Handle<v8::Value> evalInContext(const v8::Arguments& args);
 		v8::Handle<v8::Value> evalScript(const v8::Arguments& args);
+		v8::Handle<v8::Value> setWindowTitle(const v8::Arguments& args);
 	}
 	namespace graphics {
 		void Init(v8::Local<v8::Object> global);
