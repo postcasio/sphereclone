@@ -23,4 +23,9 @@
 
 #endif
 
+#define RGBA_RMASK 0x000000FF
+#define RGBA_GMASK 0x0000FF00
+#define RGBA_BMASK 0x00FF0000
+#define RGBA_AMASK 0xFF000000
+
 #endif

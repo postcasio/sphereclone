@@ -64,8 +64,15 @@ int main(int argc, char* argv[]) {
 	Handle<Value> value = compiled->Run();
 	
 	if (value.IsEmpty()) {
-		Handle<Value> exception = trycatch.Exception();
-		String::Utf8Value exception_str(exception);
+		Handle<Object> exception = trycatch.Exception()->ToObject();
+		Handle<String> str;
+		if (exception->Has(String::New("stack"))) {
+			str = exception->Get(String::New("stack"))->ToString();
+		}
+		else {
+			str = exception->ToString();
+		}
+		String::Utf8Value exception_str(str);
 		printf("Exception: %s\n", *exception_str);
 		exit(1);
 	}

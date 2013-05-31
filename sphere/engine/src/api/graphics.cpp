@@ -1,6 +1,6 @@
 #include <v8.h>
 #include <SDL/sdl.h>
-
+#include <SDL/sdl_image.h>
 #include "helpers.h"
 #include "api.h"
 #include "files.h"
@@ -10,15 +10,14 @@ using namespace std;
 
 namespace API {
 	namespace graphics {
-	
-		Handle<FunctionTemplate> Surface;
-		Handle<ObjectTemplate> SurfaceInstanceTemplate;
-		Handle<ObjectTemplate> SurfaceProto;
+		v8::Handle<v8::FunctionTemplate> Surface;
+		v8::Handle<v8::ObjectTemplate> SurfaceInstanceTemplate;
+		v8::Handle<v8::ObjectTemplate> SurfaceProto;
 		
-		Handle<FunctionTemplate> Color;
-		Handle<ObjectTemplate> ColorInstanceTemplate;
-		Handle<ObjectTemplate> ColorProto;
-		Handle<FunctionTemplate> ColorConstructor;
+		v8::Handle<v8::FunctionTemplate> Color;
+		v8::Handle<v8::ObjectTemplate> ColorInstanceTemplate;
+		v8::Handle<v8::ObjectTemplate> ColorProto;
+		v8::Handle<v8::FunctionTemplate> ColorConstructor;
 		
 		SDL_Surface* screen;
 		
@@ -33,6 +32,8 @@ namespace API {
 			SurfaceInstanceTemplate = Surface->InstanceTemplate();
 			SurfaceProto = Surface->PrototypeTemplate();
 			SurfaceProto->Set(String::New("rectangle"), V8_FUNC(Surface_rectangle));
+			SurfaceProto->Set(String::New("blitSurface"), V8_FUNC(Surface_blitSurface));
+			
 			SurfaceInstanceTemplate->SetInternalFieldCount(1);
 			
 			Color = FunctionTemplate::New();
@@ -93,6 +94,18 @@ namespace API {
 			SDL_FillRect(surface, &rect, color->ToUint32(surface->format));
 			
 			return True();
+		}
+		
+		Handle<Value> Surface_blitSurface(const Arguments& args) {
+			SDL_Surface* surface = static_cast<SDL_Surface*>(args.Holder()->GetAlignedPointerFromInternalField(0));
+			SDL_Surface* surface2 = static_cast<SDL_Surface*>(args[0]->ToObject()->GetAlignedPointerFromInternalField(0));
+			int x = args[1]->Int32Value();
+			int y = args[2]->Int32Value();
+			SDL_Rect src_rect = { 0, 0, surface2->w, surface2->h };
+			SDL_Rect dst_rect = { x, y, surface2->w, surface2->h };
+			SDL_BlitSurface(surface2, &src_rect, surface, &dst_rect);
+			
+			return Undefined();
 		}
 		
 		SphereColor::SphereColor(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha) {

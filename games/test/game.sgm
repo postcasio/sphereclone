@@ -4,3 +4,4 @@ name=sphereclone engine
 screen_width=320
 screen_height=240
 script=main.js
+api=1

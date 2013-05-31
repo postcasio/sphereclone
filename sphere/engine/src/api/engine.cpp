@@ -1,5 +1,7 @@
 #include <v8.h>
 #include <SDL/sdl.h>
+#include <string>
+
 #include "engine.h"
 #include "helpers.h"
 #include "api.h"
@@ -22,10 +24,16 @@ namespace API {
 			engine->Set(String::New("evalScript"), V8_FUNC(API::engine::evalScript));
 			engine->Set(String::New("version"), String::New(ENGINE_VERSION));
 			engine->Set(String::New("setWindowTitle"), V8_FUNC(API::engine::setWindowTitle));
+			engine->Set(String::New("log"), V8_FUNC(API::engine::log));
 		}
 		
 		Handle<Value> abort(const Arguments& args) {
-			return ThrowException(args[0]->ToString());
+			String::Utf8Value message(args[0]);
+			printf("Exception: %s\n", *message);
+			
+			::exit(1);
+			
+			return Undefined();
 		}
 		
 		Handle<Value> exit(const Arguments& args) {
@@ -105,6 +113,13 @@ namespace API {
 		Handle<Value> setWindowTitle(const Arguments& args) {
 			String::Utf8Value utf8_value(args[0]);
 			SDL_WM_SetCaption(*utf8_value, NULL);
+			
+			return Undefined();
+		}
+		
+		Handle<Value> log(const Arguments& args) {
+			String::Utf8Value utf8_value(args[0]);
+			printf(*utf8_value);
 			
 			return Undefined();
 		}
